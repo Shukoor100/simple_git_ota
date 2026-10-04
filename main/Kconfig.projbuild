@@ -1,0 +1,26 @@
+menu "OTA Configuration"
+
+    config OTA_BASE_URL
+        string "Base URL of the OTA website (no trailing slash)"
+        default "https://YOUR_USERNAME.github.io/YOUR_REPO"
+        help
+            Folder that contains version.txt and firmware.bin.
+
+    config OTA_CHECK_INTERVAL_MIN
+        int "Update check interval (minutes)"
+        range 1 1440
+        default 10
+
+    config PROV_POP
+        string "Wi-Fi provisioning proof-of-possession (PIN)"
+        default "abcd1234"
+        help
+            Entered in the phone app when setting up Wi-Fi. Change it.
+
+    config PROV_RESET_GPIO
+        int "GPIO that clears saved Wi-Fi when held low for 3 s at power-up"
+        default 0
+        help
+            GPIO0 is the BOOT button on most ESP32 dev boards.
+
+endmenu

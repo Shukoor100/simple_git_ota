@@ -1,0 +1,8 @@
+build/
+sdkconfig
+sdkconfig.old
+fw_version.txt
+managed_components/
+dependencies.lock
+.vscode/
+.cache/

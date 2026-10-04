@@ -1,0 +1,72 @@
+name: Build ESP-IDF firmware and publish OTA site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stamp version and OTA URL
+        run: |
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          REPO="${GITHUB_REPOSITORY#*/}"
+          if [ "${REPO,,}" = "${OWNER}.github.io" ]; then
+            URL="https://${OWNER}.github.io"
+          else
+            URL="https://${OWNER}.github.io/${REPO}"
+          fi
+          echo "${{ github.run_number }}" > fw_version.txt
+          sed -i "s|^CONFIG_OTA_BASE_URL=.*|CONFIG_OTA_BASE_URL=\"${URL}\"|" sdkconfig.defaults
+          echo "Version: $(cat fw_version.txt)"
+          grep OTA_BASE_URL sdkconfig.defaults
+
+      - name: Build with ESP-IDF 5.2
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: release-v5.2   # latest 5.2.x; pin e.g. v5.2.3 for fully reproducible builds
+          target: esp32
+          path: .
+
+      - name: Assemble website
+        run: |
+          mkdir -p site
+          cp build/esp32_ota.bin site/firmware.bin
+          echo "${{ github.run_number }}" > site/version.txt
+          SHA=$(sha256sum site/firmware.bin | cut -d' ' -f1)
+          SIZE=$(stat -c%s site/firmware.bin)
+          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
+          sed -e "s|@VERSION@|${{ github.run_number }}|g" \
+              -e "s|@DATE@|${DATE}|g" \
+              -e "s|@COMMIT@|${GITHUB_SHA::7}|g" \
+              -e "s|@SIZE@|${SIZE}|g" \
+              -e "s|@SHA@|${SHA}|g" \
+              web/index.html > site/index.html
+          ls -l site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

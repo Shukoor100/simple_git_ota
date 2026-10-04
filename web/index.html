@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP32 Firmware</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 3rem auto; padding: 0 1rem; line-height: 1.6; }
+    code { background: #8882; padding: 2px 6px; border-radius: 4px; word-break: break-all; }
+    a.btn { display: inline-block; padding: .6rem 1.2rem; background: #0a7; color: #fff; border-radius: 6px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>ESP32 Firmware</h1>
+  <p><strong>Latest version:</strong> @VERSION@</p>
+  <p><strong>Built:</strong> @DATE@</p>
+  <p><strong>Commit:</strong> <code>@COMMIT@</code></p>
+  <p><strong>Size:</strong> @SIZE@ bytes</p>
+  <p><strong>SHA-256:</strong> <code>@SHA@</code></p>
+  <p><a class="btn" href="firmware.bin">Download firmware.bin</a></p>
+  <p>Devices poll <code>version.txt</code> and update themselves when it is newer than what they run.</p>
+</body>
+</html>
