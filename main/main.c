@@ -43,6 +43,6 @@ void app_main(void)
         if (++ticks % 20 == 0) {   /* every 10 s at 500 ms per step */
             ESP_LOGI(TAG, "alive, firmware v%lu", (unsigned long)ota_running_version());
         }
-        vTaskDelay(pdMS_TO_TICKS(500));
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
