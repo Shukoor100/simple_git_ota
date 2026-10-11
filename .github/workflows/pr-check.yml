@@ -1,0 +1,30 @@
+name: PR build check
+
+# Build-only check for pull requests. Kept separate from build.yml because the
+# firmware version is that workflow's run number; PR runs must not consume it.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build with ESP-IDF 5.4
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.4
+          target: esp32
+          path: .
+
+      - name: Show firmware size
+        run: ls -l build/esp32_ota.bin

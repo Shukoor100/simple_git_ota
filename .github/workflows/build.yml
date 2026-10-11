@@ -34,10 +34,10 @@ jobs:
           echo "Version: $(cat fw_version.txt)"
           grep OTA_BASE_URL sdkconfig.defaults
 
-      - name: Build with ESP-IDF 5.2
+      - name: Build with ESP-IDF 5.4
         uses: espressif/esp-idf-ci-action@v1
         with:
-          esp_idf_version: release-v5.2   # latest 5.2.x; pin e.g. v5.2.3 for fully reproducible builds
+          esp_idf_version: v5.4   # latest 5.4.x; pin e.g. v5.4.1 for fully reproducible builds
           target: esp32
           path: .
 
